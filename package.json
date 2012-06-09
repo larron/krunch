@@ -1,0 +1,23 @@
+{
+    "name": "krunch",
+    "version": "0.0.1",
+    "dependencies": {
+        "less": "*",
+        "winston": "*",
+        "uglify-js": "*"
+    },
+    "devDependencies": {},
+    "optionalDependencies": {},
+    "engines": {
+        "node": "*"
+    },
+    "author": "Larron Armstead <larron@cultlogic.com>",
+    "description": "Concat, minify and uglify LESS, JS and HTML files upon file change.",
+    "repository":{ 
+        "type": "git",
+        "url": "https://github.com/larron/krunch.git"
+    },
+    "main": "lib/krunch.js",
+    "bugs": "https://github.com/larron/krunch/issues",
+    "homepage": "https://github.com/larron/krunch"
+}
