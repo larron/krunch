@@ -3,7 +3,7 @@ Krunch
 Krunch is a NodeJS module entended to help a developer quickly organize a static codebase.  
 Krunch will concat, minify, and uglify LESS, JS and HTML files upon file change while you build whatever it is that you're developing.  
 Krunch is not suited for a production environment and works best for static websites, prototyping or full Javascript based applications.  
-Krunch is built for speed, and watches only files that you specify in your configuration.  
+Krunch is built for speed and watches only files that you specify in your configuration.  
 As of now Krunch will not watch entire directories or LESS import paths.  
 
 Installation
@@ -64,9 +64,11 @@ Krunch will look for a .krunch file in your projects root directory containing a
 Now you can include one css/js file in your html vs including all of them, organize files, minify, uglify, and limit your page requests.
 
 ### Options and Defaults
+Krunch will re-watch your files when you make a change to .krunch configuration.
+
 File and output locations are required for each krunch job.
 
-Minification and JS Uglification are true by default, you can turn either of them off on a per job basis by adding the flags:  
+Minification and JS Uglification are true by default, you can turn either of them off on a per job bases by adding the flags:  
 { "compress": false, "minify": false }
 
 For LESS files, import paths may be needed to locate imported less files. By default krunch will search your root directory, ./css and ./less directories. You can overwrite on a per job bases like so:  
