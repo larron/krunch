@@ -1,14 +1,14 @@
 Krunch
 ======
-Krunch is a NodeJS module entended to help a developer quickly organize a static codebase.
-Krunch will concat, minify, and uglify LESS, JS and HTML files upon file change while you build whatever it is that you're developing.
-Krunch is not suited for a production environment and works best for static websites, prototyping or full Javascript based applications.
-Krunch is built for speed, and watches only files that you specify in your configuration.
-As of now Krunch will not watch entire directories or LESS import paths.
+Krunch is a NodeJS module entended to help a developer quickly organize a static codebase.  
+Krunch will concat, minify, and uglify LESS, JS and HTML files upon file change while you build whatever it is that you're developing.  
+Krunch is not suited for a production environment and works best for static websites, prototyping or full Javascript based applications.  
+Krunch is built for speed, and watches only files that you specify in your configuration.  
+As of now Krunch will not watch entire directories or LESS import paths.  
 
 Installation
 ------------
-via npm: npm install krunch
+via npm: npm install krunch  
 via git: git clone https://github.com/larron/krunch.git ./node_modules/krunch
 
 Configuration
