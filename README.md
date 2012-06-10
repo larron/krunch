@@ -30,48 +30,48 @@ Krunch requires a json configuration. Set defaults and overwrite them where nece
         },
         "less": {
             "path": "",
-            "import_paths": [".", "/less", "/css"],
+            "import_paths": [".", "./less", "./css"],
             "minify": true
         }
     },
-    "less": [
-        {
-            "path": "/somewhere_else",
-            "files": [
-                "/less/reset.less",
-                "/less/site.less"
-            ],
-            "output": "/css/site.css"
-        },
+    "html": [
         {
             "files": [
-                "/less/admin.less"
+                "html/layout.html",
+                "html/about.html",
+                "html/sitemap.html",
+                "html/services.html",
+                "html/tos.html",
+                "html/contact.html"
             ],
-            "output": "/css/admin.css"
+            "output": "html/site.html"
         }
     ],
     "js": [
         {
             "files": [
-                "/js/shared/jquery.js",
-                "/js/shared/jhomie.js",
-                "/js/jscript.js"
+                "js/shared/jquery.js",
+                "js/shared/jhomie.js",
+                "js/jscript.js"
             ],
             "uglify": false,
             "output": "/js/site.js"
         }
     ],
-    "html": [
+    "less": [
+        {
+            "path": "somewhere_else",
+            "files": [
+                "less/reset.less",
+                "less/site.less"
+            ],
+            "output": "css/site.css"
+        },
         {
             "files": [
-                "/html/layout.html",
-                "/html/about.html",
-                "/html/sitemap.html",
-                "/html/services.html",
-                "/html/tos.html",
-                "/html/contact.html"
+                "less/admin.less"
             ],
-            "output": "/html/site.html"
+            "output": "css/admin.css"
         }
     ]
 }
