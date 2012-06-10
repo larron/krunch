@@ -3,6 +3,7 @@
     "version": "0.0.2",
     "dependencies": {
         "less": "*",
+        "node.extend": "*",
         "winston": "*",
         "uglify-js": "*"
     },
@@ -18,6 +19,9 @@
         "url": "https://github.com/larron/krunch.git"
     },
     "main": "lib/krunch.js",
+    "bin": {
+        "krunch": "lib/krunch.js"
+    },
     "bugs": "https://github.com/larron/krunch/issues",
     "homepage": "https://github.com/larron/krunch"
 }
