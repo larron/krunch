@@ -20,7 +20,7 @@
     },
     "main": "lib/krunch.js",
     "bin": {
-        "krunch": "lib/krunch.js"
+        "krunch": "lib/cli.js"
     },
     "bugs": "https://github.com/larron/krunch/issues",
     "homepage": "https://github.com/larron/krunch"
