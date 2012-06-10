@@ -8,8 +8,7 @@ As of now Krunch will not watch entire directories or LESS import paths.
 
 Installation
 ------------
-via npm: npm install krunch -g  
-via git: git clone https://github.com/larron/krunch.git ./node_modules/krunch
+npm install krunch -g
 
 Configuration
 -------------
@@ -98,5 +97,5 @@ krunch(your_json_configuration_or_path_to_config_file);
 
 Run Krunch
 ----------
-cd root_of_project
+cd root_of_project  
 krunch path_to_config_file
