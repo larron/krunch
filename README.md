@@ -26,7 +26,8 @@ Krunch requires a json configuration. Set defaults and overwrite them where nece
         "js": {
             "path": "",
             "minify": true,
-            "uglify": true
+            "uglify": true,
+            "beautify" false
         },
         "less": {
             "path": "",
