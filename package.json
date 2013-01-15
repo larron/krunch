@@ -1,26 +1,36 @@
 {
     "name": "krunch",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "dependencies": {
         "less": "*",
         "node.extend": "*",
         "winston": "*",
-        "uglify-js": "*"
+        "uglify-js": "*",
+        "optimist": "*",
+        "findit": "*"
     },
-    "devDependencies": {},
+    "devDependencies": {
+        "mocha": "*",
+        "should": "*",
+        "yuidocjs": "*"
+    },
     "optionalDependencies": {},
     "engines": {
         "node": "*"
     },
     "author": "Larron Armstead <larron@cultlogic.com>",
-    "description": "Concat, minify and uglify LESS, JS and HTML files upon file change.",
-    "repository":{ 
+    "description": "A simple build and watch tool for javascript, html and less/css.",
+    "repository": { 
         "type": "git",
         "url": "https://github.com/larron/krunch.git"
     },
-    "main": "lib/krunch.js",
+    "main": "src/krunch.js",
     "bin": {
-        "krunch": "lib/cli.js"
+        "krunch": "src/cli.js"
+    },
+    "scripts": {
+        "docs": "yuidoc -o ./docs .",
+        "units": "./node_modules/mocha/bin/_mocha ./tests/units/ -R spec"
     },
     "bugs": "https://github.com/larron/krunch/issues",
     "homepage": "https://github.com/larron/krunch"
