@@ -1,0 +1,247 @@
+{
+    "project": {},
+    "files": {
+        "src/krunch.js": {
+            "name": "src/krunch.js",
+            "modules": {},
+            "classes": {
+                "krunch": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        }
+    },
+    "modules": {},
+    "classes": {
+        "krunch": {
+            "name": "krunch",
+            "shortname": "krunch",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "src/krunch.js",
+            "line": 15,
+            "description": "A simple build and watch tool for javascript, html and less/css.",
+            "is_constructor": 1,
+            "return": {
+                "description": "krunch",
+                "type": "Instance"
+            }
+        }
+    },
+    "classitems": [
+        {
+            "file": "src/krunch.js",
+            "line": 28,
+            "description": "Initialize krunch.",
+            "itemtype": "method",
+            "name": "init",
+            "params": [
+                {
+                    "name": "config",
+                    "description": "Location of a json config file or config as json or a javascript object.",
+                    "type": "String|Object"
+                }
+            ],
+            "return": {
+                "description": "krunch",
+                "type": "Instance"
+            },
+            "class": "krunch"
+        },
+        {
+            "file": "src/krunch.js",
+            "line": 43,
+            "description": "Loads a json config file & configures krunch.",
+            "itemtype": "method",
+            "name": "load",
+            "params": [
+                {
+                    "name": "location",
+                    "description": "Location of json config file to load.",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "krunch",
+                "type": "Instance"
+            },
+            "class": "krunch"
+        },
+        {
+            "file": "src/krunch.js",
+            "line": 64,
+            "description": "Configures instance in preparation to krunch.",
+            "itemtype": "method",
+            "name": "configure",
+            "params": [
+                {
+                    "name": "config",
+                    "description": "Configuration as json or a javascript object.",
+                    "type": "String|Object"
+                }
+            ],
+            "return": {
+                "description": "krunch",
+                "type": "Instance"
+            },
+            "class": "krunch"
+        },
+        {
+            "file": "src/krunch.js",
+            "line": 151,
+            "description": "Krunch all configured jobs.",
+            "itemtype": "method",
+            "name": "all",
+            "return": {
+                "description": "krunch",
+                "type": "Instance"
+            },
+            "class": "krunch"
+        },
+        {
+            "file": "src/krunch.js",
+            "line": 172,
+            "description": "Krunch all jobs configured for html.",
+            "itemtype": "method",
+            "name": "allHtml",
+            "return": {
+                "description": "krunch",
+                "type": "Instance"
+            },
+            "class": "krunch"
+        },
+        {
+            "file": "src/krunch.js",
+            "line": 182,
+            "description": "Krunch an html job.",
+            "itemtype": "method",
+            "name": "html",
+            "params": [
+                {
+                    "name": "job",
+                    "description": "Config for html job.",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "krunch",
+                "type": "Instance"
+            },
+            "class": "krunch"
+        },
+        {
+            "file": "src/krunch.js",
+            "line": 200,
+            "description": "Krunch all jobs configured for js.",
+            "itemtype": "method",
+            "name": "allJs",
+            "return": {
+                "description": "krunch",
+                "type": "Instance"
+            },
+            "class": "krunch"
+        },
+        {
+            "file": "src/krunch.js",
+            "line": 210,
+            "description": "Krunch a js job.",
+            "itemtype": "method",
+            "name": "js",
+            "params": [
+                {
+                    "name": "job",
+                    "description": "Config for js job.",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "krunch",
+                "type": "Instance"
+            },
+            "class": "krunch"
+        },
+        {
+            "file": "src/krunch.js",
+            "line": 239,
+            "description": "Krunch all jobs configured for less.",
+            "itemtype": "method",
+            "name": "allLess",
+            "return": {
+                "description": "krunch",
+                "type": "Instance"
+            },
+            "class": "krunch"
+        },
+        {
+            "file": "src/krunch.js",
+            "line": 249,
+            "description": "Krunch a less job.",
+            "itemtype": "method",
+            "name": "less",
+            "params": [
+                {
+                    "name": "job",
+                    "description": "Config for less job.",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "krunch",
+                "type": "Instance"
+            },
+            "class": "krunch"
+        },
+        {
+            "file": "src/krunch.js",
+            "line": 277,
+            "description": "Re-krunch on file change.",
+            "itemtype": "method",
+            "name": "watch",
+            "return": {
+                "description": "krunch",
+                "type": "Instance"
+            },
+            "class": "krunch"
+        },
+        {
+            "file": "src/krunch.js",
+            "line": 320,
+            "description": "Stop krunching on file change.",
+            "itemtype": "method",
+            "name": "unwatch",
+            "return": {
+                "description": "krunch",
+                "type": "Instance"
+            },
+            "class": "krunch"
+        },
+        {
+            "file": "src/krunch.js",
+            "line": 354,
+            "description": "Restart the watch process.",
+            "itemtype": "method",
+            "name": "rewatch",
+            "return": {
+                "description": "krunch",
+                "type": "Instance"
+            },
+            "class": "krunch"
+        },
+        {
+            "file": "src/krunch.js",
+            "line": 366,
+            "description": "Create a file from an array of file locations",
+            "itemtype": "method",
+            "name": "concatFiles",
+            "return": {
+                "description": "krunch",
+                "type": "Instance"
+            },
+            "class": "krunch"
+        }
+    ],
+    "warnings": []
+}
