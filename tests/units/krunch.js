@@ -81,18 +81,28 @@ describe('krunch', function(){
         fs.writeFileSync(testTmpDir+'/test2.less', '.test2{font-weight: bold;}', 'utf8');
     });
 
-    afterEach(function(){
-        fs.unlinkSync(testJsonConfigLocation);
-        fs.unlinkSync(testTmpDir+'/test1.html');
-        fs.unlinkSync(testTmpDir+'/test2.html');
-        fs.unlinkSync(testTmpDir+'/test1.js');
-        fs.unlinkSync(testTmpDir+'/test2.js');
-        fs.unlinkSync(testTmpDir+'/test1.less');
-        fs.unlinkSync(testTmpDir+'/test2.less');
-        try{fs.unlinkSync(obj.html[0].output);}catch(e){}
-        try{fs.unlinkSync(obj.js[0].output);}catch(e){}
-        try{fs.unlinkSync(obj.less[0].output);}catch(e){}
-        fs.rmdirSync(testTmpDir);
+    afterEach(function(done){
+        k.unwatch();
+        var d = function(){
+            fs.unlinkSync(testJsonConfigLocation);
+            fs.unlinkSync(testTmpDir+'/test1.html');
+            fs.unlinkSync(testTmpDir+'/test2.html');
+            fs.unlinkSync(testTmpDir+'/test1.js');
+            fs.unlinkSync(testTmpDir+'/test2.js');
+            fs.unlinkSync(testTmpDir+'/test1.less');
+            fs.unlinkSync(testTmpDir+'/test2.less');
+            try{fs.unlinkSync(obj.html[0].output);}catch(e){}
+            try{fs.unlinkSync(obj.js[0].output);}catch(e){}
+            try{fs.unlinkSync(obj.less[0].output);}catch(e){}
+            fs.rmdirSync(testTmpDir);
+            done();
+        };
+        /* 
+           Using this timeout because unwatch is async
+           and we need a slight timeout to unwatch files
+           and stop building
+        */
+        setTimeout(d, 10); 
     });
 
     describe('.init()', function(){
@@ -140,12 +150,18 @@ describe('krunch', function(){
     describe.skip('.watch()', function(){
 
         it('should re-krunch on file change', function(done){
+            // Can't get watch to fire change event programatically on mac?
             k.configure(obj).watch();
             // remove html file output
             try{fs.unlinkSync(obj.html[0].output);}catch(e){}
             // lets edit html and see if output is re-krunched
-            fs.writeFileSync(testTmpDir+'/test1.html', '<div>test1</div>', 'utf8');
-            fs.existsSync(obj.html[0].output).should.be.true;
+            fs.writeFileSync(testTmpDir+'/test1tmp.html', '<div>test1</div>', 'utf8');
+            fs.renameSync(testTmpDir+'/test1tmp.html', testTmpDir+'/test1.html'); // doing this to trigger watch
+            var d = function(){
+                fs.existsSync(obj.html[0].output).should.be.true;
+                done();
+            };
+            setTimeout(d, 2000);
         });
 
     });

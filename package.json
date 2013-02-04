@@ -30,7 +30,7 @@
     },
     "scripts": {
         "docs": "yuidoc -o ./docs .",
-        "units": "./node_modules/mocha/bin/_mocha ./tests/units/ -R spec"
+        "units": "./node_modules/mocha/bin/mocha ./tests/units/ -R spec"
     },
     "bugs": "https://github.com/larron/krunch/issues",
     "homepage": "https://github.com/larron/krunch"
