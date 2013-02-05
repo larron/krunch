@@ -5,7 +5,7 @@
         "less": "*",
         "node.extend": "*",
         "winston": "*",
-        "uglify-js": "*",
+        "uglify-js": "1.x.x",
         "optimist": "*",
         "findit": "*"
     },
