@@ -22,7 +22,7 @@
             "plugin_for": [],
             "extension_for": [],
             "file": "src/krunch.js",
-            "line": 15,
+            "line": 17,
             "description": "A simple build and watch tool for javascript, html and less/css.",
             "is_constructor": 1,
             "return": {
@@ -34,8 +34,8 @@
     "classitems": [
         {
             "file": "src/krunch.js",
-            "line": 28,
-            "description": "Initialize krunch.",
+            "line": 31,
+            "description": "mocha krunch.",
             "itemtype": "method",
             "name": "init",
             "params": [
@@ -53,26 +53,7 @@
         },
         {
             "file": "src/krunch.js",
-            "line": 43,
-            "description": "Loads a json config file & configures krunch.",
-            "itemtype": "method",
-            "name": "load",
-            "params": [
-                {
-                    "name": "location",
-                    "description": "Location of json config file to load.",
-                    "type": "String"
-                }
-            ],
-            "return": {
-                "description": "krunch",
-                "type": "Instance"
-            },
-            "class": "krunch"
-        },
-        {
-            "file": "src/krunch.js",
-            "line": 64,
+            "line": 71,
             "description": "Configures instance in preparation to krunch.",
             "itemtype": "method",
             "name": "configure",
@@ -91,7 +72,26 @@
         },
         {
             "file": "src/krunch.js",
-            "line": 151,
+            "line": 168,
+            "description": "Loads a json config file & configures krunch.",
+            "itemtype": "method",
+            "name": "load",
+            "params": [
+                {
+                    "name": "location",
+                    "description": "Location of json config file to load.",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "krunch",
+                "type": "Instance"
+            },
+            "class": "krunch"
+        },
+        {
+            "file": "src/krunch.js",
+            "line": 199,
             "description": "Krunch all configured jobs.",
             "itemtype": "method",
             "name": "all",
@@ -103,7 +103,7 @@
         },
         {
             "file": "src/krunch.js",
-            "line": 172,
+            "line": 220,
             "description": "Krunch all jobs configured for html.",
             "itemtype": "method",
             "name": "allHtml",
@@ -115,7 +115,7 @@
         },
         {
             "file": "src/krunch.js",
-            "line": 182,
+            "line": 230,
             "description": "Krunch an html job.",
             "itemtype": "method",
             "name": "html",
@@ -134,7 +134,7 @@
         },
         {
             "file": "src/krunch.js",
-            "line": 200,
+            "line": 251,
             "description": "Krunch all jobs configured for js.",
             "itemtype": "method",
             "name": "allJs",
@@ -146,7 +146,7 @@
         },
         {
             "file": "src/krunch.js",
-            "line": 210,
+            "line": 261,
             "description": "Krunch a js job.",
             "itemtype": "method",
             "name": "js",
@@ -165,7 +165,7 @@
         },
         {
             "file": "src/krunch.js",
-            "line": 239,
+            "line": 296,
             "description": "Krunch all jobs configured for less.",
             "itemtype": "method",
             "name": "allLess",
@@ -177,7 +177,7 @@
         },
         {
             "file": "src/krunch.js",
-            "line": 249,
+            "line": 306,
             "description": "Krunch a less job.",
             "itemtype": "method",
             "name": "less",
@@ -196,7 +196,7 @@
         },
         {
             "file": "src/krunch.js",
-            "line": 277,
+            "line": 340,
             "description": "Re-krunch on file change.",
             "itemtype": "method",
             "name": "watch",
@@ -208,7 +208,7 @@
         },
         {
             "file": "src/krunch.js",
-            "line": 320,
+            "line": 407,
             "description": "Stop krunching on file change.",
             "itemtype": "method",
             "name": "unwatch",
@@ -220,7 +220,7 @@
         },
         {
             "file": "src/krunch.js",
-            "line": 354,
+            "line": 454,
             "description": "Restart the watch process.",
             "itemtype": "method",
             "name": "rewatch",
@@ -232,7 +232,7 @@
         },
         {
             "file": "src/krunch.js",
-            "line": 366,
+            "line": 466,
             "description": "Create a file from an array of file locations",
             "itemtype": "method",
             "name": "concatFiles",

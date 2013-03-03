@@ -86,13 +86,15 @@
 
 <div class="file">
     <pre class="code prettyprint linenums">
-&#x2F;&#x2F; TODO: Make sure that we don&#x27;t lose argv&#x27;s on rewatch
-&#x2F;&#x2F; TODO: Allow use of * and walking of an entire directory (recursively) -- https:&#x2F;&#x2F;github.com&#x2F;substack&#x2F;node-findit
+&#x2F;&#x2F; TODO: Multiple Output
+&#x2F;&#x2F; TODO: Add success and failure callbacks to each parser
 &#x2F;&#x2F; TODO: Find less import paths and watch them
-&#x2F;&#x2F; TODO: Support Tidy with node-htmltidy
-&#x2F;&#x2F; TODO: Before output constants definition replacement, IE: API_ENDPOINT (should support multiple environments)
+&#x2F;&#x2F; TODO: Allow use of * and walking of an entire directory (recursively) -- https:&#x2F;&#x2F;github.com&#x2F;substack&#x2F;node-findit
+&#x2F;&#x2F; TODO: beforeOutput simple var templating, IE: API_ENDPOINT (should support multiple environments)
 var fs = require(&#x27;fs&#x27;),
+    &#x2F;&#x2F;j = require(&#x27;jhomie&#x27;),
     util = require(&#x27;util&#x27;),
+    find = require(&#x27;findit&#x27;).find,
     path = require(&#x27;path&#x27;),
     less = require(&#x27;less&#x27;),
     extend = require(&#x27;node.extend&#x27;),
@@ -110,43 +112,48 @@ var fs = require(&#x27;fs&#x27;),
     var krunch = function(){
         this._watching = !1,
         this._config = null,
+        this._commandLineConfig = null,
         this._configFileLocation = null;
     };
 
     &#x2F;**
-    Initialize krunch.
+    mocha krunch.
 
     @method init
     @param {String|Object} config Location of a json config file or config as json or a javascript object.
     @return {Instance} krunch
     *&#x2F;
-    krunch.prototype.init = function(config){
-        if(typeof config == &#x27;string&#x27; &amp;&amp; config[0] != &#x27;{&#x27;) this.load(config);
-        else this.configure(config);
-        this.all();
-        if(this._config.watch) this.watch();
+    krunch.prototype.init = function(config, success, failure){
+        try{
+            if(typeof config == &#x27;string&#x27; &amp;&amp; config[0] != &#x27;{&#x27;) this.load(config);
+            else this.configure(config);
+            this.all();
+            if(this._config.watch) this.watch();
+            if(success) success(this);
+        }
+        catch(e){
+            if(failure) failure(e, this);
+        }
         return this;
     };
 
-    &#x2F;**
-    Loads a json config file &amp; configures krunch.
-
-    @method load
-    @param {String} location Location of json config file to load.
-    @return {Instance} krunch
-    *&#x2F;
-    krunch.prototype.load = function(location){
-        this._configFileLocation = location;
-        var config = this._loadConfigFile(location);
-        return this.configure(config),
-               this;
-    };
-
-    krunch.prototype._loadConfigFile = function(location){
-        var config;
-        try config = fs.readFileSync(location, &#x27;utf8&#x27;);
-        catch(e) winston.error(&#x27;Can\&#x27;t find &#x27; + location);
-        return config;
+    krunch.prototype._init = function(argv){
+        var config = {default:{html:{},js:{},less:{}}};
+        if(&#x27;env&#x27; in argv) config.env = argv.env;
+        if(&#x27;watch&#x27; in argv) config.watch = argv.watch;
+        if(&#x27;pretty&#x27; in argv) config.default.html.pretty = argv.pretty, config.default.js.pretty = argv.pretty;
+        if(&#x27;minify&#x27; in argv) config.default.html.minify = argv.minify, config.default.js.minify = argv.minify, config.default.less.minify = argv.minify;
+        if(&#x27;uglify&#x27; in argv) config.default.js.uglify = argv.uglify;
+        if((&#x27;output&#x27; in argv) &amp;&amp; (argv._.length &gt; 0)){
+            var output = argv.output,
+                files = argv._,
+                type = (&#x27;type&#x27; in argv) ? argv.type : output.split(&#x27;.&#x27;).pop();
+            if(type == &#x27;css&#x27;) type = &#x27;less&#x27;;
+            if(type in {html: &#x27;&#x27;, js: &#x27;&#x27;, less: &#x27;&#x27;}) config[type].push({output: output, files: files});
+        }
+        this._commandLineConfig = config;
+        this.init((&#x27;config&#x27; in argv) ? argv.config : this._commandLineConfig);
+        return this;
     };
 
     &#x2F;**
@@ -156,22 +163,34 @@ var fs = require(&#x27;fs&#x27;),
     @param {String|Object} config Configuration as json or a javascript object.
     @return {Instance} krunch
     *&#x2F;
-    krunch.prototype.configure = function(config){
-        var config = this._prepConfig(config);
-            config = this._extendConfig(config);
-        return this._config = config,
-               this._jobs = this._buildJobs(config),
-               this;
+    krunch.prototype.configure = function(config, success, failure){
+        try{
+            var config = this._prepConfig(config);
+                config = this._extendConfig(config);
+            this._config = config;
+            this._jobs = this._buildJobs(config);
+            if(success) success(this);
+        }
+        catch(e){
+            if(failure) failure(e, this);
+        }
+        return this;
     };
 
     krunch.prototype._prepConfig = function(config){
         if(typeof config == &#x27;string&#x27;){
             try{
-                config = t._stripCommentsFromJSON(config);
-                try config = JSON.parse(config);
-                catch(e) winston.error(&#x27;Couldn\&#x27;t parse config&#x27;);
+                config = this._stripCommentsFromJSON(config);
+                try{
+                    config = JSON.parse(config);
+                }
+                catch(e){
+                    throw &#x27;Couldn\&#x27;t parse config&#x27;;
+                }
             }
-            catch(e) winston.error(&#x27;Couldn\&#x27;t remove comments from config&#x27;);
+            catch(e){
+                throw &#x27;Couldn\&#x27;t remove comments from config&#x27;;
+            }
         }
         return config;
     };
@@ -180,20 +199,18 @@ var fs = require(&#x27;fs&#x27;),
         return extend(true, {
             env: null,
             watch: !1,
-            default: {
-                html: {
-                    path: &#x27;&#x27;,
-                    pretty: !!1,
-                    minify: !!1 &#x2F;&#x2F; can we minify html?
+            default:{
+                html:{
+                    file_path: &#x27;&#x27;
                 },
-                js: {
-                    path: &#x27;&#x27;,
+                js:{
+                    file_path: &#x27;&#x27;,
                     minify: !!1,
                     uglify: !!1,
                     pretty: !1
                 },
-                less: {
-                    path: &#x27;&#x27;,
+                less:{
+                    file_path: &#x27;&#x27;,
                     import_paths: [&#x27;.&#x27;, &#x27;.&#x2F;less&#x27;, &#x27;.&#x2F;css&#x27;],
                     minify: !!1
                 }
@@ -201,7 +218,7 @@ var fs = require(&#x27;fs&#x27;),
             html: [],
             js: [],
             less: []
-        }, config);
+        }, config, this._commandLineConfig);
     };
 
     krunch.prototype._buildJobs = function(config){
@@ -218,8 +235,8 @@ var fs = require(&#x27;fs&#x27;),
     };
     
     krunch.prototype._buildJob = function(job, defaults){
-        if(!(&#x27;files&#x27; in job)) winston.warn(&#x27;Missing files in the config&#x27;);
-        else if(!(&#x27;output&#x27; in job)) winston.warn(&#x27;Missing an output in the config&#x27;);
+        if(!(&#x27;files&#x27; in job)) throw &#x27;Missing files in the config&#x27;;
+        else if(!(&#x27;output&#x27; in job)) throw &#x27;Missing an output in the config&#x27;;
         else{
             job = extend(true, {}, defaults, job);
             job.files = this._prepJobFiles(job);
@@ -231,9 +248,40 @@ var fs = require(&#x27;fs&#x27;),
     krunch.prototype._prepJobFiles = function(job){
         var files = [];
         job.files.forEach(function(file){
-            files.push(path.join(job.path, file));
+            files.push(path.join(job.file_path, file));
         });
         return files;
+    };
+
+    &#x2F;**
+    Loads a json config file &amp; configures krunch.
+
+    @method load
+    @param {String} location Location of json config file to load.
+    @return {Instance} krunch
+    *&#x2F;
+    krunch.prototype.load = function(location, success, failure){
+        try{
+            this._configFileLocation = location;
+            var config = this._loadConfigFile(location);
+            this.configure(config);
+            if(success) success(this);
+        }
+        catch(e){
+            if(failure) failure(e, this);
+        }
+        return this;
+    };
+
+    krunch.prototype._loadConfigFile = function(location){
+        var config;
+        try{
+            config = fs.readFileSync(location, &#x27;utf8&#x27;);
+        }
+        catch(e){
+            throw &#x27;Can\&#x27;t find &#x27; + location;
+        }
+        return config;
     };
 
     &#x2F;**
@@ -242,17 +290,17 @@ var fs = require(&#x27;fs&#x27;),
     @method all
     @return {Instance} krunch
     *&#x2F;
-    krunch.prototype.all = function(){
-        return this.allHtml()
-                   .allJs()
-                   .allLess(),
+    krunch.prototype.all = function(success, failure){
+        return this.allHtml(success, failure)
+                   .allJs(success, failure)
+                   .allLess(success, failure),
                this;
     };
 
-    krunch.prototype._all = function(type){
+    krunch.prototype._all = function(type, success, failure){
         var t = this;
         this._jobs[type].forEach(function(job){
-            t[type](job);
+            t[type](job, success, failure);
         });
         return this;
     };
@@ -263,8 +311,8 @@ var fs = require(&#x27;fs&#x27;),
     @method allHtml
     @return {Instance} krunch
     *&#x2F;
-    krunch.prototype.allHtml = function(){
-        return this._all(&#x27;html&#x27;);
+    krunch.prototype.allHtml = function(success, failure){
+        return this._all(&#x27;html&#x27;, success, failure);
     };
 
     &#x2F;**
@@ -274,14 +322,17 @@ var fs = require(&#x27;fs&#x27;),
     @param {Object} job Config for html job.
     @return {Instance} krunch
     *&#x2F;
-    krunch.prototype.html = function(job){
+    krunch.prototype.html = function(job, success, failure){
         var fileOut = job.output,
             fileIn = this.concatFiles(job.files);
         try{
             fs.writeFileSync(fileOut, fileIn, &#x27;utf8&#x27;);
+            if(success) success(this);
             winston.info(&#x27;HTML Compiler Output: &#x27;+fileOut);
         }
-        catch(e) winston.error(&#x27;Couldn\&#x27;t save &#x27;+fileOut);
+        catch(e){
+            if(failure) failure(&#x27;Couldn\&#x27;t save &#x27;+fileOut, this);
+        }
         return this;
     };
 
@@ -291,8 +342,8 @@ var fs = require(&#x27;fs&#x27;),
     @method allJs
     @return {Instance} krunch
     *&#x2F;
-    krunch.prototype.allJs = function(){
-        return this._all(&#x27;js&#x27;);
+    krunch.prototype.allJs = function(success, failure){
+        return this._all(&#x27;js&#x27;, success, failure);
     };
 
     &#x2F;**
@@ -302,7 +353,7 @@ var fs = require(&#x27;fs&#x27;),
     @param {Object} job Config for js job.
     @return {Instance} krunch
     *&#x2F;
-    krunch.prototype.js = function(job){
+    krunch.prototype.js = function(job, success, failure){
         var fileOut = job.output,
             fileIn = this.concatFiles(job.files),
             options = {};
@@ -316,11 +367,17 @@ var fs = require(&#x27;fs&#x27;),
             src = pro.gen_code(src, options); &#x2F;&#x2F; gen
             try{
                 fs.writeFileSync(fileOut, src, &#x27;utf8&#x27;);
+                if(success) success(this);
                 winston.info(&#x27;JS Compiler Output: &#x27;+fileOut);
             }
-            catch(e) winston.error(&#x27;Couldn\&#x27;t save &#x27;+fileOut);
+            catch(e){
+                throw &#x27;Couldn\&#x27;t save &#x27;+fileOut;
+            }
         }
-        catch(e) winston.error(util.inspect(e));
+        catch(e){
+            if(failure) failure(e);
+            winston.error(util.inspect(e));
+        }
         return this;
     };
 
@@ -330,8 +387,8 @@ var fs = require(&#x27;fs&#x27;),
     @method allLess
     @return {Instance} krunch
     *&#x2F;
-    krunch.prototype.allLess = function(){
-        return this._all(&#x27;less&#x27;);
+    krunch.prototype.allLess = function(success, failure){
+        return this._all(&#x27;less&#x27;, success, failure);
     };
 
     &#x2F;**
@@ -341,7 +398,7 @@ var fs = require(&#x27;fs&#x27;),
     @param {Object} job Config for less job.
     @return {Instance} krunch
     *&#x2F;
-    krunch.prototype.less = function(job){
+    krunch.prototype.less = function(job, success, failure){
         var fileOut = job.output,
             fileIn = this.concatFiles(job.files),
             parser = new(less.Parser)({
@@ -350,15 +407,21 @@ var fs = require(&#x27;fs&#x27;),
             });
         try{
             parser.parse(fileIn, function(e, tree){
-                if(e) winston.error(util.inspect(e));
+                if(e) throw &#x27;Error trying to parse less&#x27;;
                 try{
                     fs.writeFileSync(fileOut, tree.toCSS({ compress: job.minify }), &#x27;utf8&#x27;);
+                    if(success) success(this);
                     winston.info(&#x27;LESS Compiler Output: &#x27;+fileOut);
                 }
-                catch(e) winston.error(util.inspect(e));
+                catch(e){
+                    throw &#x27;Couldn\&#x27;t save &#x27;+fileOut;
+                }
             });
         }
-        catch(e) winston.error(util.inspect(e));
+        catch(e){
+            if(failure) failure(e, this);
+            winston.error(util.inspect(e));
+        }
         return this;
     };
 
@@ -368,26 +431,48 @@ var fs = require(&#x27;fs&#x27;),
     @method watch
     @return {Instance} krunch
     *&#x2F;
-    krunch.prototype.watch = function(){
+    krunch.prototype.watch = function(success, failure){
         var t = this;
-        if(!(this._config || false)) winston.error(&#x27;Missing config&#x27;);
-        else if(this._watching) winston.warn(&#x27;Already watching, please unwatch first&#x27;);
-        else{
-            [&#x27;html&#x27;, &#x27;js&#x27;, &#x27;less&#x27;].forEach(function(type){
-                t._config[type].forEach(function(job){
-                    job.files.forEach(function(file){
-                        try{
-                            fs.watchFile(file, {persistent: true, interval: 0}, function(curr, prev){
-                                if(curr.mtime.getTime() !== prev.mtime.getTime()) t[type](job);
-                            });
+        try{
+            if(!(this._config || false)) throw &#x27;Missing config&#x27;;
+            else if(!this._watching){
+                [&#x27;html&#x27;, &#x27;js&#x27;, &#x27;less&#x27;].forEach(function(type){
+                    t._jobs[type].forEach(function(job){
+                        var files = job.files.slice();
+                        &#x2F;*
+                        if(type == &#x27;less&#x27;){
+                            var re = new RegExp(&#x27;@import\s[&quot;\&#x27;](.+)[&quot;\&#x27;];&#x27;, &#x27;g&#x27;),
+                                output = t.concatFiles(files),
+                                extraLessFilesToWatch = [],
+                                match = null;
+                            while((match = re.exec(output)) || !1){
+                                &#x2F;&#x2F;extraLessFilesToWatch.push(path.join(job.file_path, match[0]));
+                                extraLessFilesToWatch.push(match);
+                            }
+                            &#x2F;&#x2F;files.push.apply(files, extraLessFilesToWatch);
+                            util.debug(util.inspect(&#x27;\n\n&#x27;+extraLessFilesToWatch)+&#x27;\n\n&#x27;);
                         }
-                        catch(e) winston.warn(&#x27;Missing &#x27; + file);
+                        *&#x2F;
+                        files.forEach(function(file){
+                            try{
+                                fs.watchFile(file, {persistent: true, interval: 0}, function(curr, prev){
+                                    if(curr.mtime.getTime() !== prev.mtime.getTime()) t[type](job);
+                                });
+                            }
+                            catch(e){
+                                throw &#x27;Missing &#x27;+file;
+                            }
+                        });
+                        if(success) success(this);
                     });
                 });
-            });
-            this._watchConfigFile();
-            this._watching = !!1;
-            winston.info(&#x27;Now Watching :)&#x27;);
+                this._watchConfigFile();
+                this._watching = !!1;
+                winston.info(&#x27;Now Watching :)&#x27;);
+            }
+        }
+        catch(e){
+            if(failure) failure(e);
         }
         return this;
     };
@@ -400,7 +485,9 @@ var fs = require(&#x27;fs&#x27;),
                     if(curr.mtime.getTime() !== prev.mtime.getTime()) t.rewatch();
                 });
             }
-            catch(e) winston.warn(&#x27;Can\&#x27;t find &#x27; + this._configFileLocation);
+            catch(e){
+                throw &#x27;Can\&#x27;t find &#x27; + this._configFileLocation;
+            }
         }
         return this;
     };
@@ -411,30 +498,43 @@ var fs = require(&#x27;fs&#x27;),
     @method unwatch
     @return {Instance} krunch
     *&#x2F;
-    krunch.prototype.unwatch = function(){
+    krunch.prototype.unwatch = function(success, failure){
         var t = this;
-        if(!(this._config || !1)) winston.error(&#x27;Missing config&#x27;);
-        else if(!(this._watching)) winston.warn(&#x27;You can\&#x27;t stop watching until you watch first&#x27;);
-        else{
-            [&#x27;html&#x27;, &#x27;js&#x27;, &#x27;less&#x27;].forEach(function(type){
-                t._config[type].forEach(function(job){
-                    job.files.forEach(function(file){
-                        try fs.unwatchFile(file);
-                        catch(e) winston.error(&#x27;Can\&#x27;t stop watching &#x27; + file);
+        try{
+            if(!(this._config || !1)) throw &#x27;Missing config&#x27;;
+            else if(this._watching){
+                [&#x27;html&#x27;, &#x27;js&#x27;, &#x27;less&#x27;].forEach(function(type){
+                    t._jobs[type].forEach(function(job){
+                        job.files.forEach(function(file){
+                            try{
+                                fs.unwatchFile(file);
+                            }
+                            catch(e){
+                                throw &#x27;Can\&#x27;t stop watching &#x27; + file;
+                            }
+                        });
                     });
                 });
-            });
-            this._unwatchConfigFile();
-            this._watching = !1;
-            winston.info(&#x27;Now Unwatching :(&#x27;);
+                this._unwatchConfigFile();
+                this._watching = !1;
+                if(success) success(this);
+                winston.info(&#x27;Now Unwatching :(&#x27;);
+            }
+        }
+        catch(e){
+            if(failure) failure(e);
         }
         return this;
     };
 
     krunch.prototype._unwatchConfigFile = function(){
         if(this._configFileLocation || !1){
-            try fs.unwatchFile(this._configFileLocation);
-            catch(e) winston.error(&#x27;Can\&#x27;t stop watching &#x27; + this._configFileLocation);
+            try{
+                fs.unwatchFile(this._configFileLocation);
+            }
+            catch(e){
+                throw &#x27;Can\&#x27;t stop watching &#x27; + this._configFileLocation;
+            }
         }
         return this;
     };
@@ -446,9 +546,9 @@ var fs = require(&#x27;fs&#x27;),
     @return {Instance} krunch
     *&#x2F;
     krunch.prototype.rewatch = function(){
-        if(this._configFileLocation || !1) this.unwatch().load(this._configFileLocation).watch();
-        else winston.warn(&#x27;No configuration file to watch&#x27;);
-        return this;
+        &#x2F;&#x2F; TODO: decide on callbacks for this?
+        return this.unwatch().init((this._configFileLocation || !1) ? this._configFileLocation : this._config).watch(),
+               this;
     };
 
     &#x2F;**
@@ -460,8 +560,12 @@ var fs = require(&#x27;fs&#x27;),
     krunch.prototype.concatFiles = function(files){
         var output = &#x27;&#x27;;
         files.forEach(function(file){
-            try output += fs.readFileSync(file, &#x27;utf8&#x27;);
-            catch(e) winston.warn(&#x27;Missing &#x27; + file);
+            try{
+                output += fs.readFileSync(file, &#x27;utf8&#x27;);
+            }
+            catch(e){
+                throw &#x27;Missing &#x27; + file;
+            }
         });
         return output;
     };
