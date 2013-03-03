@@ -4,7 +4,7 @@
 // TODO: Allow use of * and walking of an entire directory (recursively) -- https://github.com/substack/node-findit
 // TODO: beforeOutput simple var templating, IE: API_ENDPOINT (should support multiple environments)
 var fs = require('fs'),
-    j = require('jhomie'),
+    //j = require('jhomie'),
     util = require('util'),
     find = require('findit').find,
     path = require('path'),

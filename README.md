@@ -1,5 +1,8 @@
 Krunch
 ======
+NEEDS REWRITE
+
+
 Krunch is a NodeJS module entended to help a developer quickly organize a static codebase.  
 Krunch will concat, minify, and uglify LESS, JS and HTML files upon file change while you build whatever it is that you're developing.  
 Krunch is not suited for a production environment and works best for static websites, prototyping or full Javascript based applications.  
